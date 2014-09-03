@@ -19,7 +19,7 @@ import sys
 
 path = os.path.dirname(__file__)
 path = os.path.join(path, "..")
-os.chdir(path)  # using pyinstaller to comment it
+#os.chdir(path)  # using pyinstaller to comment it
 sys.path.append(path)
 print os.getcwd()
 

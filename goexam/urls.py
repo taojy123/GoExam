@@ -15,7 +15,6 @@ urlpatterns = patterns('',
     ('^$', index),
     ('^index/$', index),
     ('^answer/$', answer),
-    ('^correct/$', correct),
 
 
     ('^read_data/$', read_data),

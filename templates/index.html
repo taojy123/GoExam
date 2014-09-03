@@ -76,7 +76,7 @@
  -->
 
 
-        <div style="text-align: left; margin-left:50px; margin-top:30px;">
+        <div style="text-align: left; margin-left:50px; margin-top:30px;width:90%;" class="jumbotron">
 
         <form action="/answer/" method="GET" class="form">
 
@@ -107,6 +107,18 @@
 
 
           <button type="submit" class="btn btn-primary" >提交</button>
+
+          {% if wrong %}
+          <div style="color:red;margin-top:50px">
+              <label>
+                答错啦！正确答案是：
+
+                {% for answer in question.correct.all %}
+                      {{ answer.label }}
+                {% endfor %}
+              </label>
+            </div>
+          {% endif %}
 
         </form>
 
