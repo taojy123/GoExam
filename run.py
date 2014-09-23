@@ -19,7 +19,7 @@ import django.contrib.admin
 
 import django.db.models.sql.compiler
 from django.contrib.auth.backends import *
-from django.conf.urls.defaults import *
+# from django.conf.urls.defaults import *
 #these are django imports
 import django.template.loaders.filesystem
 import django.template.loaders.app_directories
@@ -79,18 +79,18 @@ import django.core.context_processors
 import django.template.defaulttags
 import django.template.defaultfilters
 import django.template.loader_tags
-from django.conf.urls.defaults import *
+# from django.conf.urls.defaults import *
 import django.contrib.admin.views.main
 import django.core.context_processors
 import django.contrib.auth.views
 import django.contrib.auth.backends
 import django.views.static
 import django.contrib.admin.templatetags.log
-import django.contrib.admin.templatetags.adminmedia
+# import django.contrib.admin.templatetags.adminmedia
 import django.conf.urls.shortcut
 import django.views.defaults
 from django.core.handlers.wsgi import WSGIHandler
-from django.core.servers.basehttp import AdminMediaHandler
+# from django.core.servers.basehttp import AdminMediaHandler
 from django.conf import settings
 from django.utils import translation
 import django.contrib.staticfiles.urls

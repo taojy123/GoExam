@@ -8,12 +8,25 @@ from models import *
 import os
 import uuid
 import random
+import traceback
 
 
 
 def index(request):
-    questions = Question.objects.all()
-    question = random.choice(questions)
+    question_id = request.REQUEST.get("question_id")
+    if question_id:
+        question = Question.objects.get(id=question_id)
+    else:
+        questions = Question.objects.order_by("id")
+        if not questions:
+            return HttpResponseRedirect("/input/")
+        question = questions[0]
+    prev_id = question.id - 1
+    next_id = question.id + 1
+    if not Question.objects.filter(id=prev_id):
+        prev_id = ""
+    if not Question.objects.filter(id=next_id):
+        next_id = ""
     return render_to_response('index.html', locals())
 
 
@@ -30,149 +43,188 @@ def answer(request):
     correct_ids.sort()
 
     if answer_ids == correct_ids:
-        return HttpResponseRedirect("/")
+        next_id = int(question_id) + 1
+        if not Question.objects.filter(id=next_id):
+            return HttpResponseRedirect("/")
+        return HttpResponseRedirect("/?question_id=%d" % next_id)
 
     wrong = True
+    prev_id = question.id - 1
+    next_id = question.id + 1
+    if not Question.objects.filter(id=prev_id):
+        prev_id = ""
+    if not Question.objects.filter(id=next_id):
+        next_id = ""
 
     return render_to_response('index.html', locals())
 
 
 
-
-def read_data(request):
-    # Question.objects.all().delete()
-    # Answer.objects.all().delete()
-    read_choice("01.txt")
-    read_choice("02.txt")
-    read_choice("03.txt")
-    read_choice("04.txt")
-    read_judge("05.txt")
-    read_judge("06.txt")
-    return HttpResponse("Read Complete!")
+def input_view(request):
+    qs_num = Question.objects.all().count()
+    return render_to_response('input.html', locals())
 
 
-def is_digital(s):
-    if s >= "0" and s <= "9":
-        return True
-    return False
+def input_file(request):
+    print "-----------------------------------"
+    f = request.FILES.get("file")
+    if f:
+        s = f.read()
+        s = s.decode("gbk")
+        s = s.strip()
+        s = s.replace("\r", "")
+        while True:
+            if "\n\n\n" not in s:
+                break
+            s = s.replace("\n\n\n", "\n\n")
+        qs = s.split("\n\n")
+        success_count = 0
+        for q in qs:
+            q = q.strip()
+            if "\n" in q:
+                if read_choice(q):
+                    success_count += 1
+            else:
+                if read_judge(q):
+                    success_count += 1
+        success = True
+    qs_num = Question.objects.all().count() 
+    return render_to_response('input.html', locals())
 
-def read_choice(fn):
-    s = open(fn).read()
-    for q in s.split("|||"):
 
-        try:
+def clean(request):
+    for q in Question.objects.all():
+        print "delete", q.topic
+        q.delete()
+    return HttpResponseRedirect("/input")
 
-            if q.count("\n") < 2:
-                continue
 
-            if not q.count("A"):
-                continue
 
-            i = q.find("\n")
-            topic = q[:i].strip()
-            answers = q[i:].replace("A", "|").replace("B", "|").replace("C", "|").replace("D", "|")
-            answers = answers.split("|")
+def read_choice(q):
+    try:
+        if not q.count("A"):
+            raise
 
+        i = q.find("\n")
+        topic = q[:i].strip()
+        answers = q[i:].replace("A", "|").replace("B", "|").replace("C", "|").replace("D", "|").replace("E", "|")
+        answers = answers.split("|")
+
+        topic_show = topic.replace("A", " ").replace("B", " ").replace("C", " ").replace("D", " ").replace("E", " ")
+
+        if Question.objects.filter(topic=topic_show):
+            print "exist", topic
+            return
+
+        question = Question(topic=topic_show)
+        question.save()
+        question.answer.clear()
+        question.correct.clear()
+
+        if len(answers) > 1:
             da = answers[1].strip()
-            db = answers[2].strip()
-            dc = answers[3].strip()
-            dd = answers[4].strip()
-            i = dd.find("\n")
-            if i > 0:
-                dd = dd[:i]
-
             aa = Answer(label="A", desc=da)
-            ab = Answer(label="B", desc=db)
-            ac = Answer(label="C", desc=dc)
-            ad = Answer(label="D", desc=dd)
             aa.save()
-            ab.save()
-            ac.save()
-            ad.save()
-
-            if Question.objects.filter(topic=topic.replace("A", " ").replace("B", " ").replace("C", " ").replace("D", " ")):
-                # print "exist", topic.decode("utf8")
-                continue
-            question = Question(topic=topic.replace("A", " ").replace("B", " ").replace("C", " ").replace("D", " "))
-            question.save()
             question.answer.add(aa)
+
+        if len(answers) > 2:
+            db = answers[2].strip()
+            ab = Answer(label="B", desc=db)
+            ab.save()
             question.answer.add(ab)
+
+        if len(answers) > 3:
+            dc = answers[3].strip()
+            ac = Answer(label="C", desc=dc)
+            ac.save()
             question.answer.add(ac)
+
+        if len(answers) > 4:
+            dd = answers[4].strip()
+            ad = Answer(label="D", desc=dd)
+            ad.save()
             question.answer.add(ad)
 
-            if topic.count("A"):
-                question.correct.add(aa)
-            if topic.count("B"):
-                question.correct.add(ab)
-            if topic.count("C"):
-                question.correct.add(ac)
-            if topic.count("D"):
-                question.correct.add(ad)
-
-            question.save()
-
-            if not question.correct.count():
-                question.delete()
-
-            print topic.decode("utf8")
-
-        except:
-            print "error", topic.decode("utf8")
-
-    return "ok"
+        if len(answers) > 5:
+            de = answers[5].strip()
+            ae = Answer(label="E", desc=de)
+            ae.save()
+            question.answer.add(ae)
 
 
+        if topic.count("A"):
+            question.correct.add(aa)
+        if topic.count("B"):
+            question.correct.add(ab)
+        if topic.count("C"):
+            question.correct.add(ac)
+        if topic.count("D"):
+            question.correct.add(ad)
+        if topic.count("E"):
+            question.correct.add(ae)
 
-def read_judge(fn):
+        question.save()
 
-    s = open(fn).read()
-    for q in s.split("\n"):
+        print "success", topic
 
-        try:
-            q = q.strip()
+    except:
+        print "error", topic
+        traceback.print_exc()
+        return
 
-            if not q:
-                continue
-
-            topic = ".."
-            if is_digital(q[0]) or is_digital(q[1]):
-                
-                topic = q
-
-                if Answer.objects.filter(label="√"):
-                    at = Answer.objects.get(label="√")
-                else:
-                    at = Answer(label="√")
-                    at.save()
-                    
-                if Answer.objects.filter(label="×"):
-                    af = Answer.objects.get(label="×")
-                else:
-                    af = Answer(label="×")
-                    af.save()
+    return True
 
 
-                if Question.objects.filter(topic=topic.replace("√", " ").replace("×", " ")):
-                    # print "exist", topic.decode("utf8")
-                    continue
-                question = Question(topic=topic.replace("√", " ").replace("×", " "))
-                question.save()
-                question.answer.add(at)
-                question.answer.add(af)
 
-                if topic.count("√"):
-                    question.correct.add(at)
-                elif topic.count("×"):
-                    question.correct.add(af)
+def read_judge(q):
 
-                question.save()
+    try:
 
-                print topic.decode("utf8")
+        topic = q
 
-        except:
-            print "error", topic.decode("utf8")
+        if (u"√" not in q) and (u"×" not in q):
+            raise
 
-    return "ok"
+        if Answer.objects.filter(label=u"√"):
+            at = Answer.objects.get(label=u"√")
+        else:
+            at = Answer(label=u"√")
+            at.save()
+            
+        if Answer.objects.filter(label=u"×"):
+            af = Answer.objects.get(label=u"×")
+        else:
+            af = Answer(label=u"×")
+            af.save()
+
+        topic_show = topic.replace(u"√", " ").replace(u"×", " ")
+        if Question.objects.filter(topic=topic_show):
+            print "exist", topic
+            return
+
+        question = Question(topic=topic_show)
+        question.save()
+        question.answer.clear()
+        question.correct.clear()
+        
+        question.answer.add(at)
+        question.answer.add(af)
+
+        if topic.count(u"√"):
+            question.correct.add(at)
+        elif topic.count(u"×"):
+            question.correct.add(af)
+
+        question.save()
+
+        print "success", topic
+
+    except:
+        print "error", topic
+        traceback.print_exc()
+        return
+
+    return True
 
 
 

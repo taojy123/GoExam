@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="jumbotron">
+          {% if success %}
+              <p style="color:red">导入成功 {{ success_count }} 题！</p>
+          {% endif %}
+
+
+          <form action="/input_file/" method="post" enctype="multipart/form-data">
+            <label>选择导入文件(注意文件内容格式):</label>
+            <br/>
+            <input type="file" name="file" />
+            <br/>
+
+            <input type="submit" value="提交导入文件" class="btn btn-primary" />
+            <a class="btn btn-danger" href="/clean" onclick="return confirm('确定要清空题库?')">清空现有题库</a>
+          </form>
+
+          <br/>
+          <p>当前题库中包含 {{ qs_num }} 道题</p>
+
+
+
+
+
+    </div>
+
+
+    <script>
+      $("#input").addClass("active")
+    </script>
+
+
+          
+  {% endblock %}
