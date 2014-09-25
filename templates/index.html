@@ -69,6 +69,15 @@
         alert("测试版本只可查看录入的前150题")
         top.location.href = "/"
       {% endif %}
+
+
+      {% if not question.is_multiple %}
+        $("[name='answer_id']").click(function(){
+          $("form").submit()
+        })
+
+      {% endif %}
+
     </script>
 
 
