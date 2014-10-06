@@ -1,6 +1,6 @@
 # -*- mode: python -*-
 a = Analysis([os.path.join(HOMEPATH,'support\\_mountzlib.py'), os.path.join(HOMEPATH,'support\\useUnicode.py'), 'run.py'],
-             pathex=['C:\\workspace\\git\\GoExam'])
+             pathex=['E:\\Workspace\\GitHub\\GoExam'])
 pyz = PYZ(a.pure)
 exe = EXE( pyz,
           a.scripts,

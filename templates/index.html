@@ -65,10 +65,6 @@
     <script>
       $("#index").addClass("active")
 
-      {% if question.id > 150 %}
-        alert("测试版本只可查看录入的前150题")
-        top.location.href = "/"
-      {% endif %}
 
 
       {% if not question.is_multiple %}
