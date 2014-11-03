@@ -1,0 +1,202 @@
+﻿<!DOCTYPE HTML>
+<HTML>
+  <HEAD>
+    <TITLE>考试答题</TITLE>
+<META content="text/html; charset=utf-8" http-equiv=Content-Type>
+<META content=IE=EmulateIE7 http-equiv=X-UA-Compatible>
+<SCRIPT type=text/javascript src="/static/files/AJScript.js"></SCRIPT>
+
+<SCRIPT type=text/javascript src="/static/files/prototype.js"></SCRIPT>
+
+<SCRIPT type=text/javascript src="/static/files/scriptaculous.js"></SCRIPT>
+
+<SCRIPT type=text/javascript src="/static/files/lightbox.js"></SCRIPT>
+
+<SCRIPT type=text/javascript src="/static/files/JScript.js"></SCRIPT>
+<liNK rel=stylesheet type=text/css href="/static/files/index.css">
+<SCRIPT type=text/javascript>
+        function show() {
+
+            if (confirm('确认交卷么？') == true) {
+                var light = document.getElementById("a1");
+                var fade = document.getElementById('fade');
+                light.style.display = 'block';
+                fade.style.display = 'block';
+                fade.style.height = document.body.scrollHeight;
+                fade.style.width = document.body.scrollWidth;
+                top.location.href = "/finish/?exam_id={{ exam.id }}";
+            }
+            else {
+                return false;
+            }
+        }
+    </SCRIPT>
+
+<SCRIPT language=JavaScript>
+    // 修复 IE 下 PNG 图片不能透明显示的问题
+    function fixPNG(myImage) {
+        var arVersion = navigator.appVersion.split("MSIE");
+        var version = parseFloat(arVersion[1]);
+        if ((version >= 5.5) && (version < 7) && (document.body.filters)) {
+            var imgID = (myImage.id) ? "id='" + myImage.id + "' " : "";
+            var imgClass = (myImage.className) ? "class='" + myImage.className + "' " : "";
+            var imgTitle = (myImage.title) ? "title='" + myImage.title + "' " : "title='" + myImage.alt + "' ";
+            var imgStyle = "display:inline-block;" + myImage.style.cssText;
+            var strNewHTML = "<span " + imgID + imgClass + imgTitle
+
+          + " style=\"" + "width:" + myImage.width
+
+          + "px; height:" + myImage.height
+
+          + "px;" + imgStyle + ";"
+
+          + "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader"
+
+          + "(src=\'" + myImage.src + "\', sizingMethod='scale');\"></span>";
+            myImage.outerHTML = strNewHTML;
+        }
+    }
+
+   
+</SCRIPT>
+
+<META name=GENERATOR content="MSHTML 8.00.6001.23580"></HEAD>
+<BODY>
+<FORM id=form1 method=post name=form1 action=ksmain.aspx>
+<div><input id=__VIEWSTATE type=hidden name=__VIEWSTATE> </div>
+<div id=header>
+<div class=con1>
+<H2><IMG src="/static/files/mht19F(1).tmp"></H2>
+<H3>欢迎登陆交通运输从业考试系统</H3>
+<H4>今天是{{ today.year }}年{{ today.month }}月{{ today.day }}日</H4>
+<div class=clear></div></div><input id=hfPaperID value=-1 type=hidden 
+name=hfPaperID><input style="VISIBIliTY: hidden" id=GoBtn value=提交查询内容 type=submit name=GoBtn> 
+</div>
+<div id=main>
+<div class=logo_left><IMG src="/static/files/mht1A2(1).tmp" 
+onload=fixPNG(this)></div>
+<div class=logo_right><IMG src="/static/files/mht1A5(1).tmp" 
+onload=fixPNG(this)></div>
+<div class=clear></div>
+<div class=con2>
+<H3>道路运输理论模拟考试 </H3></div>
+<div class=con6left>
+<div class=con7>
+<H3><SPAN>试卷信息</SPAN></H3>
+<H4>
+  <SPAN id=qType>
+    {% if question.is_multiple %}
+      多选题:
+    {% else %}
+      单选题:
+    {% endif %}
+  </SPAN>
+  <SPAN id=QuestionId>{{ qa.num }}</SPAN>
+</H4>
+<P><SPAN id=problem_content class=qdes>{{ question.topic }}</SPAN></P>
+<H5></H5>
+<SPAN id=AnswerStr class=qdes>
+  {% for answer in question.answer.all %}
+    <P>{{ answer.label }}.{{ answer.desc }}</P>
+  {% endfor %}
+</SPAN></div>
+<div class=con8>
+<H3>
+  <b>请选择答案</b>
+  {% for answer in question.answer.all %}
+    <a href="/add_answer/?exam_id={{ exam.id }}&question_num={{ qa.num }}&answer_id={{ answer.id }}">
+      <image style="BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px" 
+      class="answerButton" title="{{ answer.label }}" src="/static/files/{{ answer.label }}.png" >
+    </a> 
+  {% endfor %}
+</H3>
+<H3 class=dbk><STRONG>已选择答案</STRONG> 
+  {% for answer in qa.answer.all %}
+    <a href="/del_answer/?exam_id={{ exam.id }}&question_num={{ qa.num }}&answer_id={{ answer.id }}">
+      <image style="BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px" 
+      class="answerButton" title="{{ answer.label }}" src="/static/files/{{ answer.label }}.png" >
+    </a> 
+  {% endfor %}
+</H3>
+<H4>
+  <a href="/question/?exam_id={{ exam.id }}&question_num={{ qa.num|add:-1 }}">
+ <image style="BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; cursor: pointer;" 
+id="Pro" class="answerButton" src="/static/files/mht1B1(1).tmp" 
+name="Pro">
+</a>
+  <a href="/question/?exam_id={{ exam.id }}&question_num={{ qa.num|add:1 }}">
+ <image  style="BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; cursor: pointer;" 
+id="Next" class="answerButton" src="/static/files/mht1B4(1).tmp" 
+name="Next">
+</a>
+</H4></div></div>
+<div class=con6right>
+<div class=con9>
+<H3><SPAN>考试信息</SPAN></H3>
+<!-- <H4><IMG 
+style="BORDER-RIGHT-WIDTH: 0px; WIDTH: 107px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; HEIGHT: 147px; BORDER-LEFT-WIDTH: 0px" 
+id=Photo src="/static/files/mht1A8(1).tmp"></H4> -->
+<UL style="margin-right: 90px;">
+<!--   <li>考 台：<SPAN id="examDesk">{{ exam.id }}</SPAN>  </li> -->
+  <li>学员编号：<SPAN id="stuCard">{{ exam.userid }}</SPAN> </li>
+  <li>学员姓名：<SPAN id="stuName">{{ exam.username }}</SPAN> </li>
+  <!-- <li>考试科目：<SPAN id="examType">道路货物运输驾驶员</SPAN> </li> -->
+  {% if exam.is_end %}
+    <li id="score" style="color:red">考试得分：<span>{{ exam.score }}</span></li>
+  {% else %}
+    <li id="xys">剩余时间：<SPAN id="examTime"></SPAN> </li>
+  {% endif %}
+</UL>
+<div class=clear></div>
+<H5>
+
+  {% if not exam.is_end %}
+    <image 
+  style="BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; cursor:pointer;" 
+  id="End" onclick="show();" src="/static/files/mht1B7(1).tmp">
+  {% endif %}
+
+</H5>
+</div>
+<div class=con10>
+<H3><SPAN>答题信息</SPAN></H3>
+<UL>
+  {% for qa2 in exam.qa.all %}
+    <li class="{% if qa2.num == qa.num %}hbk{% else %}bk{% endif %}">
+      <a href="/question/?exam_id={{ exam.id }}&question_num={{ qa2.num }}"
+      style="color:{% if qa2.answer.count %}red{% else %}grey{% endif %}"  >
+      {{ qa2.num }}</a>
+    </li>
+  {% endfor %}
+</UL>
+</div></div>
+<div class=clear></div></div>
+<div id=footer>
+<H3></H3></div>
+<script>
+    var maxtime = {{ remain_seconds }} //设置时间，按秒计算     
+    function CountDown() {
+        if (maxtime >= 0) {
+            minutes = Math.floor(maxtime / 60);
+            //seconds = Math.floor(maxtime % 60);
+            msg = minutes + "分" ;//+ seconds + "秒"
+            document.all["examTime"].innerHTML = msg;
+            if (maxtime == 5 * 60) alert('注意，还有5分钟!');
+            --maxtime;
+        }
+        else {
+            clearInterval(timer);
+            window.location = "default.aspx";
+        }
+    }
+    timer = setInterval("CountDown()", 1000);
+</script>
+
+<div style="WIDTH: 100%; DISPLAY: none" id="a1" class="white_content">
+<H1>正在提交试卷请稍等...</H1></div>
+<div id="fade" class="black_overlay"></div>
+<div>
+</div>
+</FORM>
+</BODY>
+</HTML>
