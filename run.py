@@ -11,11 +11,13 @@ import goexam.settings
 import goexam.models
 import goexam.views
 
+
 import django.contrib.auth
 import django.contrib.contenttypes
 import django.contrib.sessions
 import django.contrib.sites
 import django.contrib.admin
+import django.contrib.sessions.serializers
 
 import django.db.models.sql.compiler
 from django.contrib.auth.backends import *
@@ -94,6 +96,7 @@ from django.core.handlers.wsgi import WSGIHandler
 from django.conf import settings
 from django.utils import translation
 import django.contrib.staticfiles.urls
+
 
 if __name__ == "__main__":
     if len(sys.argv)==1:

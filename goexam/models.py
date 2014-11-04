@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-
+import datetime
 
 class Answer(models.Model):
     label = models.CharField(max_length=64, blank=True , null=True)
@@ -34,6 +34,19 @@ class QA(models.Model):
     question = models.ForeignKey(Question)
     answer = models.ManyToManyField(Answer)
 
+    @property
+    def is_right(self):
+        qaas = [a.label for a in self.answer.all()]
+        qucs = [a.label for a in self.question.correct.all()]
+        qaas.sort()
+        qucs.sort()
+        # print qaas, qucs
+        if qaas == qucs:
+            return True
+        else:
+            return False
+
+
 
 class Exam(models.Model):
     userid = models.CharField(max_length=255, blank=True , null=True)
@@ -43,15 +56,12 @@ class Exam(models.Model):
     qa = models.ManyToManyField(QA)
     begin_time = models.DateTimeField()
     score = models.IntegerField(default=0)
+    is_end = models.BooleanField(default=False)
 
 
     @property
     def question_count(self):
         return self.single_count + self.multiple_count
 
-    @property
-    def is_end(self):
-        if self.score:
-            return True
 
 

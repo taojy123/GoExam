@@ -114,12 +114,18 @@ def begin(request):
 
     userid = request.REQUEST.get("userid")
     username = request.REQUEST.get("username")
+    submit = request.REQUEST.get("submit")
 
     config = open("config.ini").read().strip().split("\n")
     single_count = int(config[0])
     multiple_count = int(config[1])
 
-    Exam.objects.filter(userid=userid).delete()
+    if Exam.objects.filter(userid=userid).count():
+        if submit == u"开始考试":
+            Exam.objects.filter(userid=userid).delete()
+        else:
+            exam = Exam.objects.get(userid=userid)
+            return HttpResponseRedirect("/question/?exam_id=%s" % exam.id)
 
     exam = Exam()
     exam.userid = userid
@@ -173,7 +179,7 @@ def question(request):
     qa = exam.qa.get(num=question_num)
     question = qa.question
 
-    remain_seconds = 1980 - ( (now - exam.begin_time).seconds + (now - exam.begin_time).days * 3600 *24 )
+    remain_seconds = 400 - ( (now - exam.begin_time).seconds + (now - exam.begin_time).days * 3600 *24 )
     return render_to_response('question.html', locals())
 
 
@@ -219,18 +225,13 @@ def finish(request):
     exam = Exam.objects.get(id=exam_id)
     score = 0
     for qa in exam.qa.all():
-        question = qa.question
-        qaas = [a.label for a in qa.answer.all()]
-        qucs = [a.label for a in question.correct.all()]
-        qaas.sort()
-        qucs.sort()
-        # print qaas, qucs
-        if qaas == qucs:
-            if question.is_multiple:
+        if qa.is_right:
+            if qa.question.is_multiple:
                 score += 2
             else:
                 score += 1
     exam.score = score
+    exam.is_end = True
     exam.save()
     return HttpResponseRedirect("/question/?exam_id=%s" % exam.id)
 

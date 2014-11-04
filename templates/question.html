@@ -77,11 +77,11 @@ name=hfPaperID><input style="VISIBIliTY: hidden" id=GoBtn value=提交查询内�
 onload=fixPNG(this)></div>
 <div class=logo_right><IMG src="/static/files/mht1A5(1).tmp" 
 onload=fixPNG(this)></div>
-<div class=clear></div>
-<div class=con2>
+<div class="clear"></div>
+<div class="con2">
 <H3>道路运输理论模拟考试 </H3></div>
-<div class=con6left>
-<div class=con7>
+<div class="con6left">
+<div class="con7" style="min-height:400px">
 <H3><SPAN>试卷信息</SPAN></H3>
 <H4>
   <SPAN id=qType>
@@ -104,20 +104,35 @@ onload=fixPNG(this)></div>
 <H3>
   <b>请选择答案</b>
   {% for answer in question.answer.all %}
-    <a href="/add_answer/?exam_id={{ exam.id }}&question_num={{ qa.num }}&answer_id={{ answer.id }}">
+    <a 
+    {% if not exam.is_end %} 
+    href="/add_answer/?exam_id={{ exam.id }}&question_num={{ qa.num }}&answer_id={{ answer.id }}"
+    {% endif %}
+    >
       <image style="BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px" 
       class="answerButton" title="{{ answer.label }}" src="/static/files/{{ answer.label }}.png" >
     </a> 
   {% endfor %}
 </H3>
-<H3 class=dbk><STRONG>已选择答案</STRONG> 
+<H3><STRONG>已选择答案</STRONG> 
   {% for answer in qa.answer.all %}
-    <a href="/del_answer/?exam_id={{ exam.id }}&question_num={{ qa.num }}&answer_id={{ answer.id }}">
+    <a 
+    {% if not exam.is_end %} 
+    href="/del_answer/?exam_id={{ exam.id }}&question_num={{ qa.num }}&answer_id={{ answer.id }}"
+    {% endif %}
+    >
       <image style="BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px" 
       class="answerButton" title="{{ answer.label }}" src="/static/files/{{ answer.label }}.png" >
     </a> 
   {% endfor %}
 </H3>
+{% if exam.is_end %}
+  <H3><STRONG>正确答案:</STRONG> 
+    {% for answer in question.correct.all %}
+        <span>{{ answer.label }}</span>
+    {% endfor %}
+  </H3>
+{% endif %}
 <H4>
   <a href="/question/?exam_id={{ exam.id }}&question_num={{ qa.num|add:-1 }}">
  <image style="BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; cursor: pointer;" 
@@ -130,8 +145,8 @@ id="Next" class="answerButton" src="/static/files/mht1B4(1).tmp"
 name="Next">
 </a>
 </H4></div></div>
-<div class=con6right>
-<div class=con9>
+<div class="con6right">
+<div class="con9">
 <H3><SPAN>考试信息</SPAN></H3>
 <!-- <H4><IMG 
 style="BORDER-RIGHT-WIDTH: 0px; WIDTH: 107px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; HEIGHT: 147px; BORDER-LEFT-WIDTH: 0px" 
@@ -165,7 +180,18 @@ id=Photo src="/static/files/mht1A8(1).tmp"></H4> -->
     <li class="{% if qa2.num == qa.num %}hbk{% else %}bk{% endif %}">
       <a href="/question/?exam_id={{ exam.id }}&question_num={{ qa2.num }}"
       style="color:{% if qa2.answer.count %}red{% else %}grey{% endif %}"  >
-      {{ qa2.num }}</a>
+      
+      {% if exam.is_end %}
+        {% if qa2.is_right %}
+          {{ qa2.num }}
+        {% else %}
+          <s>{{ qa2.num }}</s>
+        {% endif %}
+      {% else %}
+        {{ qa2.num }}
+      {% endif %}
+
+      </a>
     </li>
   {% endfor %}
 </UL>
@@ -173,24 +199,27 @@ id=Photo src="/static/files/mht1A8(1).tmp"></H4> -->
 <div class=clear></div></div>
 <div id=footer>
 <H3></H3></div>
-<script>
-    var maxtime = {{ remain_seconds }} //设置时间，按秒计算     
-    function CountDown() {
-        if (maxtime >= 0) {
-            minutes = Math.floor(maxtime / 60);
-            //seconds = Math.floor(maxtime % 60);
-            msg = minutes + "分" ;//+ seconds + "秒"
-            document.all["examTime"].innerHTML = msg;
-            if (maxtime == 5 * 60) alert('注意，还有5分钟!');
-            --maxtime;
-        }
-        else {
-            clearInterval(timer);
-            window.location = "default.aspx";
-        }
-    }
-    timer = setInterval("CountDown()", 1000);
-</script>
+{% if not exam.is_end %}
+  <script>
+      var maxtime = {{ remain_seconds }} //设置时间，按秒计算     
+      function CountDown() {
+          if (maxtime >= 0) {
+              minutes = Math.floor(maxtime / 60);
+              //seconds = Math.floor(maxtime % 60);
+              msg = minutes + "分" ;//+ seconds + "秒"
+              document.all["examTime"].innerHTML = msg;
+              if (maxtime == 5 * 60) alert('注意，还有5分钟!');
+              --maxtime;
+          }
+          else {
+              clearInterval(timer);
+              alert('考试结束');
+              top.location.href = "/finish/?exam_id={{ exam.id }}";
+          }
+      }
+      timer = setInterval("CountDown()", 1000);
+  </script>
+{% endif %}
 
 <div style="WIDTH: 100%; DISPLAY: none" id="a1" class="white_content">
 <H1>正在提交试卷请稍等...</H1></div>
