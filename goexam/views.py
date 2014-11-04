@@ -11,6 +11,7 @@ import random
 import traceback
 import re
 import datetime
+import time
 
 
 
@@ -158,7 +159,7 @@ def begin(request):
         qa.save()
         qa.answer.clear()
         exam.qa.add(qa)
-
+    time.sleep(1)
     return HttpResponseRedirect("/question/?exam_id=%s" % exam.id)
 
 
@@ -194,12 +195,15 @@ def add_answer(request):
     exam = Exam.objects.get(id=exam_id)
     question_num = int(question_num)
     qa = exam.qa.get(num=question_num)
-    if not qa.question.is_multiple:
+    if qa.question.is_multiple:
+        if answer in qa.answer.all():
+            qa.answer.remove(answer)
+        else:
+            qa.answer.add(answer)
+    else:
         qa.answer.clear()
-    qa.answer.add(answer)
+        qa.answer.add(answer)
     return HttpResponseRedirect("/question/?exam_id=%s&question_num=%s" % (exam_id, question_num))
-
-
 
 
 def del_answer(request):
