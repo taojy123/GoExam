@@ -176,7 +176,7 @@ id=Photo src="/static/files/mht1A8(1).tmp"></H4> -->
 <div class=con10>
 <H3><SPAN>答题信息</SPAN></H3>
 <UL>
-  {% for qa2 in exam.qa.all %}
+  {% for qa2 in exam.qa_order %}
     <li class="{% if qa2.num == qa.num %}hbk{% else %}bk{% endif %}">
       <a href="/question/?exam_id={{ exam.id }}&question_num={{ qa2.num }}"
       style="color:{% if qa2.answer.count %}red{% else %}grey{% endif %}"  >

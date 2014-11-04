@@ -126,28 +126,32 @@ document.createElement("header");
 document.createElement("footer"); 
 </script> 
 <![endif]--> 
+    <script src="/static/js/jquery-1.10.2.js"></script>
 </head> 
  
 <body> 
 <div class="wrap"> 
-  <form action="/begin/" > 
+  <form action="/begin/"> 
     <section class="loginForm"> 
       <header> 
         <h1>进入考试</h1> 
       </header> 
-      <div class="loginForm_content"> 
+      <div class="loginForm_content" id="aa"> 
         <fieldset> 
           <div class="inputWrap"> 
-            <input type="text" name="userid" placeholder="学员编号" autofocus required> 
+            <input type="text" name="userid" placeholder="学员编号" autofocus> 
           </div> 
           <div class="inputWrap"> 
-            <input type="text" name="username" placeholder="学员姓名" required> 
+            <input type="text" name="username" placeholder="学员姓名"> 
           </div> 
         </fieldset> 
         <fieldset> 
-          <input type="submit" name="submit" value="开始考试"> 
-          <input type="submit" name="submit" value="继续考试"> 
+          <input type="submit" name="submit" value="开始考试" onclick='$("#aa").hide();$("#bb").show();'> 
+          <input type="submit" name="submit" value="继续考试" onclick='$("#aa").hide();$("#bb").show();'> 
         </fieldset> 
+      </div> 
+      <div class="loginForm_content" id="bb" style="display:none"> 
+        <h3 style="margin-left:80px">正在创建题库 请稍候...</h3>
       </div> 
     </section> 
   </form> 

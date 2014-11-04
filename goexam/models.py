@@ -63,5 +63,9 @@ class Exam(models.Model):
     def question_count(self):
         return self.single_count + self.multiple_count
 
+    @property
+    def qa_order(self):
+        return self.qa.order_by("num")
+
 
 
