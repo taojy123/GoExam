@@ -20,9 +20,13 @@ urlpatterns = patterns('',
     ('^del_answer/$', del_answer),
     ('^finish/$', finish),
 
+    ('^admin/$', input_view),
     ('^input/$', input_view),
     ('^input_file/$', input_file),
     ('^clean/$', clean),
+    ('^create/$', create),
+    ('^create_exam/$', create_exam),
+    ('^del_exam/$', del_exam),
 
 )
 # This will work if DEBUG is True

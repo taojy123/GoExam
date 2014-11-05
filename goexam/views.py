@@ -73,6 +73,79 @@ def clean(request):
 
 
 
+
+def create(request):
+    # for exam in Exam.objects.filter(userid="99999_99999"):
+    #     if (exam.single_count + exam.multiple_count) != exam.qa.count():
+    #         exam.delete()
+    exam_num = Exam.objects.filter(userid="99999_99999").count()
+    return render_to_response('create.html', locals())
+
+
+def create_exam(request):
+    now = datetime.datetime.now()
+
+    num = int(request.REQUEST.get("num", 1))
+
+    for i in range(num):
+        try:
+            config = open("config.ini").read().strip().split("\n")
+            single_count = int(config[0])
+            multiple_count = int(config[1])
+
+            exam = Exam()
+            exam.userid = "99999_99999"
+            exam.username = ""
+            exam.single_count = single_count
+            exam.multiple_count = multiple_count
+            exam.begin_time = now
+            exam.save()
+            exam.qa.clear()
+
+            single_list = []
+            multiple_list = []
+
+            for question in Question.objects.all():
+                if question.correct.count():
+                    if question.is_multiple:
+                        multiple_list.append(question)
+                    else:
+                        single_list.append(question)
+
+            single_list = random.sample(single_list, single_count)
+            multiple_list = random.sample(multiple_list, multiple_count)
+            n = 0
+            for question in single_list + multiple_list:
+                n += 1
+                print n
+                qa = QA()
+                qa.num = n
+                qa.question = question
+                qa.save()
+                qa.answer.clear()
+                exam.qa.add(qa)
+            exam.save()
+            time.sleep(1)
+        except Exception, e:
+            try:
+                exam.delete()
+            except:
+                pass
+            print "recreate"
+
+    return HttpResponseRedirect("/create")
+
+
+
+def del_exam(request):
+    Exam.objects.filter(userid="99999_99999").delete()
+    return HttpResponseRedirect("/create")
+
+
+
+
+
+
 def read_choice(q):
     try:
         q = q.strip()
@@ -111,55 +184,73 @@ def read_choice(q):
 
 def begin(request):
     
-    now = datetime.datetime.now()
+    while True:
+        try:
+            now = datetime.datetime.now()
 
-    userid = request.REQUEST.get("userid")
-    username = request.REQUEST.get("username")
-    submit = request.REQUEST.get("submit")
+            userid = request.REQUEST.get("userid")
+            username = request.REQUEST.get("username")
+            submit = request.REQUEST.get("submit")
 
-    config = open("config.ini").read().strip().split("\n")
-    single_count = int(config[0])
-    multiple_count = int(config[1])
+            config = open("config.ini").read().strip().split("\n")
+            single_count = int(config[0])
+            multiple_count = int(config[1])
 
-    if Exam.objects.filter(userid=userid).count():
-        if submit == u"开始考试":
-            Exam.objects.filter(userid=userid).delete()
-        else:
-            exam = Exam.objects.get(userid=userid)
-            return HttpResponseRedirect("/question/?exam_id=%s" % exam.id)
+            if Exam.objects.filter(userid=userid).count():
+                if submit == u"开始考试":
+                    Exam.objects.filter(userid=userid).delete()
+                else:
+                    exam = Exam.objects.get(userid=userid)
+                    return HttpResponseRedirect("/question/?exam_id=%s" % exam.id)
 
-    exam = Exam()
-    exam.userid = userid
-    exam.username = username
-    exam.single_count = single_count
-    exam.multiple_count = multiple_count
-    exam.begin_time = now
-    exam.save()
-    exam.qa.clear()
+            if Exam.objects.filter(userid="99999_99999").count():
+                exam = Exam.objects.filter(userid="99999_99999")[0]
+                exam.userid = userid
+                exam.username = username
+                exam.begin_time = now
+                exam.save()
+                return HttpResponseRedirect("/question/?exam_id=%s" % exam.id)
 
-    single_list = []
-    multiple_list = []
+            exam = Exam()
+            exam.userid = userid
+            exam.username = username
+            exam.single_count = single_count
+            exam.multiple_count = multiple_count
+            exam.begin_time = now
+            exam.save()
+            exam.qa.clear()
 
-    for question in Question.objects.all():
-        if question.correct.count():
-            if question.is_multiple:
-                multiple_list.append(question)
-            else:
-                single_list.append(question)
+            single_list = []
+            multiple_list = []
 
-    single_list = random.sample(single_list, single_count)
-    multiple_list = random.sample(multiple_list, multiple_count)
-    n = 0
+            for question in Question.objects.all():
+                if question.correct.count():
+                    if question.is_multiple:
+                        multiple_list.append(question)
+                    else:
+                        single_list.append(question)
 
-    for question in single_list + multiple_list:
-        n += 1
-        qa = QA()
-        qa.num = n
-        qa.question = question
-        qa.save()
-        qa.answer.clear()
-        exam.qa.add(qa)
-    time.sleep(1)
+            single_list = random.sample(single_list, single_count)
+            multiple_list = random.sample(multiple_list, multiple_count)
+            n = 0
+
+            for question in single_list + multiple_list:
+                n += 1
+                qa = QA()
+                qa.num = n
+                qa.question = question
+                qa.save()
+                qa.answer.clear()
+                exam.qa.add(qa)
+            exam.save()
+            time.sleep(1)
+            break
+        except:
+            try:
+                exam.delete()
+            except:
+                pass
+            print "retry"
     return HttpResponseRedirect("/question/?exam_id=%s" % exam.id)
 
 

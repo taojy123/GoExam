@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="jumbotron">
+
+
+          <a class="btn btn-primary" href="#" id="create_btn">开始创建备用套题</a>
+
+          <a class="btn btn-danger" href="/del_exam" id="del_btn" onclick="return confirm('确定删除所有套题?')">删除所有套题</a>
+
+          <p id="tips" style="display:none">正在创建,请稍候...</p>
+
+          <p>当前备用试题还剩 {{ exam_num }} 套</p>
+
+    </div>
+
+
+    <script>
+      $("#create").addClass("active")
+      $(function(){
+          $("#create_btn").click(function(){
+            var num = prompt("请输入创建数量(建议不要超出10):")
+            if(num){
+              $("#create_btn").hide()
+              $("#del_btn").hide()
+              $("#tips").show()
+              top.location.href = "/create_exam/?num=" + num
+            }
+          })
+      })
+    </script>
+
+
+          
+  {% endblock %}
