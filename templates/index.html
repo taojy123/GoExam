@@ -11,7 +11,7 @@ body {
 } 
 .wrap { 
     margin:150px auto; 
-    width:380px; 
+    width:480px; 
     overflow:hidden; 
 } 
 .loginForm { 
@@ -21,7 +21,7 @@ body {
     background-color:#FFF; 
     border-radius:4px; 
     height:250px; 
-    width:380px; 
+    width:480px; 
     background: -webkit-gradient(linear, left top, left 24, from(#EEE), color-stop(4%, #FFF), to(#EEE)); 
     background: -moz-linear-gradient(top, #EEE, #FFF 1px, #EEE 24px); 
     background: -o-linear-gradient(top, #EEEEEE, #FFFFFF 1px, #EEEEEE 24px); 
@@ -100,6 +100,8 @@ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF6900', endC
     margin:10px 10px 0; 
 filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#EEEEEE', endColorstr='#FFFFFF'); 
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#EEEEEE', endColorstr='#FFFFFF')"; 
+    width: 330px;
+    margin-left: 100px;
 } 
 fieldset input[type=checkbox] { 
     margin-left:10px; 
@@ -117,6 +119,12 @@ fieldset a:hover {
 fieldset span { 
     font-size:12px; 
 } 
+.caption{
+    float: left;
+    margin-top: 18px;
+    margin-left: 18px;
+    font-size: 16px;
+}
 </style> 
 <!--为了让IE支持HTML5元素，做如下操作：--> 
 <!--[if IE]> 
@@ -138,16 +146,18 @@ document.createElement("footer");
       </header> 
       <div class="loginForm_content" id="aa"> 
         <fieldset> 
+            <span class="caption">学员编号:</span>
           <div class="inputWrap"> 
             <input type="text" name="userid" placeholder="学员编号" id="userid" autofocus> 
           </div> 
+            <span class="caption">学员姓名:</span>
           <div class="inputWrap"> 
             <input type="text" name="username" placeholder="学员姓名"> 
           </div> 
         </fieldset> 
         <fieldset> 
-          <input type="submit" name="submit" value="开始考试" onclick='if(!$("#userid").val()){return false};$("#aa").hide();$("#bb").show();'> 
-          <input type="submit" name="submit" value="继续考试" onclick='if(!$("#userid").val()){return false};$("#aa").hide();$("#bb").show();'> 
+          <input type="submit" name="submit" value="开始考试" onclick='if(!$("#userid").val()){alert("请输入学员编号");return false};$("#aa").hide();$("#bb").show();' style="margin-left:100px"> 
+          <input type="submit" name="submit" value="继续考试" onclick='if(!$("#userid").val()){alert("请输入学员编号");return false};$("#aa").hide();$("#bb").show();'> 
         </fieldset> 
       </div> 
       <div class="loginForm_content" id="bb" style="display:none"> 
