@@ -256,59 +256,76 @@ def begin(request):
 
 
 def question(request):
+    n = 0
+    while True:
+        try:
+            now = datetime.datetime.now()
+            today = now
 
-    now = datetime.datetime.now()
-    today = now
+            exam_id = request.REQUEST.get("exam_id")
+            question_num = request.REQUEST.get("question_num", 1)
+            answer_ids = request.REQUEST.getlist("answer_id")
 
-    exam_id = request.REQUEST.get("exam_id")
-    question_num = request.REQUEST.get("question_num", 1)
-    answer_ids = request.REQUEST.getlist("answer_id")
+            exam = Exam.objects.get(id=exam_id)
+            question_num = int(question_num)
+            if question_num > exam.question_count or question_num < 1:
+                question_num = 1
+            qa = exam.qa.get(num=question_num)
+            question = qa.question
 
-    exam = Exam.objects.get(id=exam_id)
-    question_num = int(question_num)
-    if question_num > exam.question_count or question_num < 1:
-        question_num = 1
-    qa = exam.qa.get(num=question_num)
-    question = qa.question
-
-    remain_seconds = 400 - ( (now - exam.begin_time).seconds + (now - exam.begin_time).days * 3600 *24 )
+            remain_seconds = 1850 - ( (now - exam.begin_time).seconds + (now - exam.begin_time).days * 3600 *24 )
+            break
+        except:
+            n += 1
+            if n > 30:
+                return HttpResponseRedirect("/")
     return render_to_response('question.html', locals())
 
 
 
 def add_answer(request):
 
-    exam_id = request.REQUEST.get("exam_id")
-    question_num = request.REQUEST.get("question_num", 1)
-    answer_id = request.REQUEST.get("answer_id")
+    while True:
+        try:
+            exam_id = request.REQUEST.get("exam_id")
+            question_num = request.REQUEST.get("question_num", 1)
+            answer_id = request.REQUEST.get("answer_id")
 
-    answer = Answer.objects.get(id=answer_id)
-    exam = Exam.objects.get(id=exam_id)
-    question_num = int(question_num)
-    qa = exam.qa.get(num=question_num)
-    if qa.question.is_multiple:
-        if answer in qa.answer.all():
-            qa.answer.remove(answer)
-        else:
-            qa.answer.add(answer)
-    else:
-        qa.answer.clear()
-        qa.answer.add(answer)
+            answer = Answer.objects.get(id=answer_id)
+            exam = Exam.objects.get(id=exam_id)
+            question_num = int(question_num)
+            qa = exam.qa.get(num=question_num)
+            if qa.question.is_multiple:
+                if answer in qa.answer.all():
+                    qa.answer.remove(answer)
+                else:
+                    qa.answer.add(answer)
+            else:
+                qa.answer.clear()
+                qa.answer.add(answer)
+            break
+        except:
+            pass
     return HttpResponseRedirect("/question/?exam_id=%s&question_num=%s" % (exam_id, question_num))
 
 
 def del_answer(request):
 
-    exam_id = request.REQUEST.get("exam_id")
-    question_num = request.REQUEST.get("question_num", 1)
-    answer_id = request.REQUEST.get("answer_id")
+    while True:
+        try:
+            exam_id = request.REQUEST.get("exam_id")
+            question_num = request.REQUEST.get("question_num", 1)
+            answer_id = request.REQUEST.get("answer_id")
 
-    answer = Answer.objects.get(id=answer_id)
-    exam = Exam.objects.get(id=exam_id)
-    question_num = int(question_num)
-    qa = exam.qa.get(num=question_num)
-    if qa.question.is_multiple:
-        qa.answer.remove(answer)
+            answer = Answer.objects.get(id=answer_id)
+            exam = Exam.objects.get(id=exam_id)
+            question_num = int(question_num)
+            qa = exam.qa.get(num=question_num)
+            if qa.question.is_multiple:
+                qa.answer.remove(answer)
+            break
+        except:
+            pass
     return HttpResponseRedirect("/question/?exam_id=%s&question_num=%s" % (exam_id, question_num))
 
 
@@ -316,18 +333,23 @@ def del_answer(request):
 
 def finish(request):
 
-    exam_id = request.REQUEST.get("exam_id")
-    exam = Exam.objects.get(id=exam_id)
-    score = 0
-    for qa in exam.qa.all():
-        if qa.is_right:
-            if qa.question.is_multiple:
-                score += 2
-            else:
-                score += 1
-    exam.score = score
-    exam.is_end = True
-    exam.save()
+    while True:
+        try:
+            exam_id = request.REQUEST.get("exam_id")
+            exam = Exam.objects.get(id=exam_id)
+            score = 0
+            for qa in exam.qa.all():
+                if qa.is_right:
+                    if qa.question.is_multiple:
+                        score += 2
+                    else:
+                        score += 1
+            exam.score = score
+            exam.is_end = True
+            exam.save()
+            break
+        except:
+            pass
     return HttpResponseRedirect("/question/?exam_id=%s" % exam.id)
 
 
