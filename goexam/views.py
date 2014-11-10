@@ -191,7 +191,7 @@ def begin(request):
             userid = request.REQUEST.get("userid")
             username = request.REQUEST.get("username")
             submit = request.REQUEST.get("submit")
-
+            
             config = open("config.ini").read().strip().split("\n")
             single_count = int(config[0])
             multiple_count = int(config[1])
@@ -236,6 +236,7 @@ def begin(request):
 
             for question in single_list + multiple_list:
                 n += 1
+                print n
                 qa = QA()
                 qa.num = n
                 qa.question = question
@@ -276,8 +277,9 @@ def question(request):
             remain_seconds = 1850 - ( (now - exam.begin_time).seconds + (now - exam.begin_time).days * 3600 *24 )
             break
         except:
+            time.sleep(500)
             n += 1
-            if n > 30:
+            if n > 10:
                 return HttpResponseRedirect("/")
     return render_to_response('question.html', locals())
 

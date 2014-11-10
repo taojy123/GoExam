@@ -158,6 +158,7 @@ id=Photo src="/static/files/mht1A8(1).tmp"></H4> -->
   <!-- <li>考试科目：<SPAN id="examType">道路货物运输驾驶员</SPAN> </li> -->
   {% if exam.is_end %}
     <li id="score" style="color:red">考试得分：<span>{{ exam.score }}</span></li>
+    <li><a href="/begin/?userid={{ exam.userid }}&username={{ exam.username }}&submit=开始考试" onclick="return confirm('确定重新开始考试?')">重新考试</a></li>
   {% else %}
     <li id="xys">剩余时间：<SPAN id="examTime"></SPAN> </li>
   {% endif %}
