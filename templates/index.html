@@ -121,7 +121,7 @@ fieldset span {
 } 
 .caption{
     float: left;
-    margin-top: 18px;
+    margin-top: 12px;
     margin-left: 18px;
     font-size: 16px;
 }
@@ -148,15 +148,16 @@ document.createElement("footer");
         <fieldset> 
             <span class="caption">学员编号:</span>
           <div class="inputWrap"> 
-            <input type="text" name="userid" placeholder="学员编号" id="userid" autofocus> 
+            <input type="text" name="userid" placeholder="学员编号" id="userid" autofocus value="{{ userid }}"> 
           </div> 
+          <br/>
             <span class="caption">学员姓名:</span>
           <div class="inputWrap"> 
-            <input type="text" name="username" placeholder="学员姓名"> 
+            <input type="text" name="username" placeholder="学员姓名" value="{{ username }}"> 
           </div> 
         </fieldset> 
         <fieldset> 
-          <input type="submit" name="submit" value="开始考试" onclick='if(!$("#userid").val()){alert("请输入学员编号");return false};$("#aa").hide();$("#bb").show();' style="margin-left:100px"> 
+          <input type="submit" name="submit" value="开始考试" onclick='if(!$("#userid").val()){alert("请输入学员编号");return false};$("#aa").hide();$("#bb").show();' style="margin-left:100px" id="begin"> 
           <input type="submit" name="submit" value="继续考试" onclick='if(!$("#userid").val()){alert("请输入学员编号");return false};$("#aa").hide();$("#bb").show();'> 
         </fieldset> 
       </div> 
@@ -166,5 +167,12 @@ document.createElement("footer");
     </section> 
   </form> 
 </div> 
+
+{% if userid %}
+    <script>
+        $("#begin").click()
+    </script>
+{% endif %}
+
 </body> 
 </html> 

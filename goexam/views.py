@@ -16,6 +16,8 @@ import time
 
 
 def index(request):
+    userid = request.REQUEST.get("userid", "")
+    username = request.REQUEST.get("username", "")
     question_id = request.REQUEST.get("question_id")
     if question_id:
         question = Question.objects.get(id=question_id)
@@ -111,9 +113,14 @@ def create_exam(request):
                         multiple_list.append(question)
                     else:
                         single_list.append(question)
-
-            single_list = random.sample(single_list, single_count)
-            multiple_list = random.sample(multiple_list, multiple_count)
+            if single_count:
+                single_list = random.sample(single_list, single_count)
+            else:
+                single_list = []
+            if multiple_count:
+                multiple_list = random.sample(multiple_list, multiple_count)
+            else:
+                multiple_list = []
             n = 0
             for question in single_list + multiple_list:
                 n += 1
@@ -152,7 +159,7 @@ def read_choice(q):
         lines = q.split("\n")
         topic = lines[0]
 
-        corrects = lines[1].replace("Answer:", "").strip()
+        corrects = lines[1].replace("Answer", "").strip()
 
         question = Question(topic=topic)
         question.save()
@@ -230,8 +237,15 @@ def begin(request):
                     else:
                         single_list.append(question)
 
-            single_list = random.sample(single_list, single_count)
-            multiple_list = random.sample(multiple_list, multiple_count)
+            if single_count:
+                single_list = random.sample(single_list, single_count)
+            else:
+                single_list = []
+            if multiple_count:
+                multiple_list = random.sample(multiple_list, multiple_count)
+            else:
+                multiple_list = []
+                
             n = 0
 
             for question in single_list + multiple_list:
@@ -246,12 +260,13 @@ def begin(request):
             exam.save()
             time.sleep(1)
             break
-        except:
+        except Exception, e:
             try:
                 exam.delete()
             except:
                 pass
             print "retry"
+            print e
     return HttpResponseRedirect("/question/?exam_id=%s" % exam.id)
 
 
