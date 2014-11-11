@@ -49,12 +49,15 @@ def input_file(request):
         s = f.read()
         s = s.decode("gbk")
         s = s.strip()
-        s = s.replace("\r", "")
+        s = s.replace("\r", "\n")
         while True:
             if "\n\n" not in s:
-                break
+                if "  " not in s:
+                    break
             s = s.replace("\n\n", "\n")
+            s = s.replace("  ", " ")
 
+        s = s.replace("\n \n", "\n").replace(" .", ".")
         qs = re.split(r"\n\d+?\.", s)
         print len(qs)
 
@@ -159,7 +162,7 @@ def read_choice(q):
         lines = q.split("\n")
         topic = lines[0]
 
-        corrects = lines[1].replace("Answer", "").strip()
+        corrects = lines[1].replace("Answer", "").replace("Anwser", "").strip()
 
         question = Question(topic=topic)
         question.save()
@@ -167,11 +170,13 @@ def read_choice(q):
         question.correct.clear()
 
         for answer in lines[2:]:
+            print answer
             label, desc = answer.split(".", 1)
             a = Answer(label=label, desc=desc)
             a.save()
             question.answer.add(a)
             if label in corrects:
+                print "Answer:", label
                 question.correct.add(a)
 
         question.save()
@@ -181,6 +186,10 @@ def read_choice(q):
     except:
         print "error", topic
         traceback.print_exc()
+        try:
+            question.delete()
+        except:
+            pass
         return
 
     return True
@@ -204,10 +213,8 @@ def begin(request):
             multiple_count = int(config[1])
 
             if Exam.objects.filter(userid=userid).count():
-                if submit == u"开始考试":
-                    Exam.objects.filter(userid=userid).delete()
-                else:
-                    exam = Exam.objects.get(userid=userid)
+                if not submit == u"开始考试":
+                    exam = Exam.objects.filter(userid=userid).order_by("-id")[0]
                     return HttpResponseRedirect("/question/?exam_id=%s" % exam.id)
 
             if Exam.objects.filter(userid="99999_99999").count():
@@ -260,13 +267,9 @@ def begin(request):
             exam.save()
             time.sleep(1)
             break
-        except Exception, e:
-            try:
-                exam.delete()
-            except:
-                pass
+        except:
             print "retry"
-            print e
+            print traceback.print_exc()
     return HttpResponseRedirect("/question/?exam_id=%s" % exam.id)
 
 
