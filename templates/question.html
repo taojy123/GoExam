@@ -134,12 +134,12 @@ onload=fixPNG(this)></div>
   </H3>
 {% endif %}
 <H4>
-  <a href="/question/?exam_id={{ exam.id }}&question_num={{ qa.num|add:-1 }}">
+  <a href="/question/?exam_id={{ exam.id }}&question_num={{ qa.num|add:-1 }}&t={{ t }}">
  <image style="BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; cursor: pointer;" 
 id="Pro" class="answerButton" src="/static/files/mht1B1(1).tmp" 
 name="Pro">
 </a>
-  <a href="/question/?exam_id={{ exam.id }}&question_num={{ qa.num|add:1 }}">
+  <a href="/question/?exam_id={{ exam.id }}&question_num={{ qa.num|add:1 }}&t={{ t }}">
  <image  style="BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; cursor: pointer;" 
 id="Next" class="answerButton" src="/static/files/mht1B4(1).tmp" 
 name="Next">
@@ -179,7 +179,7 @@ id=Photo src="/static/files/mht1A8(1).tmp"></H4> -->
 <UL>
   {% for qa2 in exam.qa_order %}
     <li class="{% if qa2.num == qa.num %}hbk{% else %}bk{% endif %}">
-      <a href="/question/?exam_id={{ exam.id }}&question_num={{ qa2.num }}"
+      <a href="/question/?exam_id={{ exam.id }}&question_num={{ qa2.num }}&t={{ t }}"
       style="color:{% if qa2.answer.count %}red{% else %}grey{% endif %}"  >
       
       {% if exam.is_end %}
