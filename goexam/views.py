@@ -117,11 +117,11 @@ def create_exam(request):
                     else:
                         single_list.append(question)
             if single_count:
-                single_list = random.sample(single_list, single_count)
+                single_list = random_sample(single_list, single_count)
             else:
                 single_list = []
             if multiple_count:
-                multiple_list = random.sample(multiple_list, multiple_count)
+                multiple_list = random_sample(multiple_list, multiple_count)
             else:
                 multiple_list = []
             n = 0
@@ -153,7 +153,11 @@ def del_exam(request):
 
 
 
-
+def random_sample(l, c):
+    n = random.randint(1, 10)
+    for i in range(n):
+        random.shuffle(l)
+    return l[:c]
 
 
 def read_choice(q):
@@ -245,11 +249,11 @@ def begin(request):
                         single_list.append(question)
 
             if single_count:
-                single_list = random.sample(single_list, single_count)
+                single_list = random_sample(single_list, single_count)
             else:
                 single_list = []
             if multiple_count:
-                multiple_list = random.sample(multiple_list, multiple_count)
+                multiple_list = random_sample(multiple_list, multiple_count)
             else:
                 multiple_list = []
                 
