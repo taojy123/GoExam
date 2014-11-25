@@ -47,7 +47,7 @@ def input_file(request):
     f = request.FILES.get("file")
     if f:
         s = f.read()
-        s = s.decode("gbk")
+        s = s.decode("gbk").encode("utf8")
         s = s.strip()
         s = s.replace("\r", "\n")
         while True:
