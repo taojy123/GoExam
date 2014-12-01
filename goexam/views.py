@@ -295,7 +295,12 @@ def question(request):
     qa = exam.qa.get(num=question_num)
     question = qa.question
 
-    remain_seconds = 3650 - ( (now - exam.begin_time).seconds + (now - exam.begin_time).days * 3600 *24 )
+    t = open("config.ini").readlines()
+    if len(t) > 2:
+        t = int(t[2].strip())
+    else:
+        t = 30
+    remain_seconds = t * 60 + 50 - ( (now - exam.begin_time).seconds + (now - exam.begin_time).days * 3600 *24 )
    
     return render_to_response('question.html', locals())
 
